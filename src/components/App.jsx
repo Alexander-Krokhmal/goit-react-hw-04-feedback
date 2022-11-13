@@ -46,8 +46,6 @@ const App = () => {
       default:
         return;
     }
-
-
     // this.setState(prevState => ({
     //   [e.target.name]: prevState[e.target.name] + 1,
     // }));
