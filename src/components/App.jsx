@@ -1,42 +1,59 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { FeedbackOptions } from './FeedbackOptions/FeedbackOptions';
 import { Section } from './Section/Section';
 import { Statistics } from './Statistics/Statistics';
 
-class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+const KEYS = {
+  good: 'good',
+  neutral: 'neutral',
+  bad: 'bad',
+};
 
-  onBtnClick = e => {
-    this.setState(prevState => ({
-      [e.target.name]: prevState[e.target.name] + 1,
-    }));
-  };
-
-  countTotalFeedback = () => {
-    return Object.values(this.state).reduce(
+const App = () => {
+  const[good, setGood] = useState(0);
+  const[neutral, setNeutral] = useState(0);
+  const[bad, setBad] = useState(0);
+  
+  const options = {good, neutral, bad}
+  const total = Object.values(options).reduce(
       (total, value) => (total += value),
       0
     );
-  };
-
-  countPositiveFeedbackPercentage = () => {
+  
+  const countPositiveFeedbackPercentage = () => {
     return `${Math.round(
-      (this.state.good * 100) / this.countTotalFeedback()
-    )}%`;
+      (good / total) * 100)}%`;
+  };
+  const positivePercentage = good
+    ? countPositiveFeedbackPercentage()
+    : 0;
+  
+
+  
+  const onBtnClick = e => {
+    const { name } = e.target;
+
+    switch (name) {
+      case KEYS.good:
+        setGood(prevState => prevState + 1);
+        break;
+      case KEYS.neutral:
+        setNeutral(prevState => prevState + 1);
+        break;
+      case KEYS.bad:
+        setBad(prevState => prevState + 1);
+        break;
+      default:
+        return;
+    }
+
+
+    // this.setState(prevState => ({
+    //   [e.target.name]: prevState[e.target.name] + 1,
+    // }));
   };
 
-  render() {
-    const { good, neutral, bad } = this.state;
-    const total = this.countTotalFeedback();
-    const positivePercentage = this.state.good
-      ? this.countPositiveFeedbackPercentage()
-      : 0;
-
-    return (
+   return (
       <div
         style={{
           height: '100vh',
@@ -50,8 +67,8 @@ class App extends Component {
       >
         <Section title="Please leave feedback">
           <FeedbackOptions
-            options={this.state}
-            onLeaveFeedback={this.onBtnClick}
+            options={options}
+            onLeaveFeedback={onBtnClick}
           />
         </Section>
 
@@ -66,7 +83,6 @@ class App extends Component {
           </Section>
       </div>
     );
-  }
 }
 
 export default App;
